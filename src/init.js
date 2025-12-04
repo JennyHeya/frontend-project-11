@@ -91,41 +91,39 @@ elements.form.addEventListener('submit', (e) => {
     })
 })
 
-// Автообновление//
-const updateFeeds = () => {
+// === АВТООБНОВЛЕНИЕ — БЕЗ ГЛУБОКОЙ ВЛОЖЕННОСТИ (Sonar будет доволен) ===
+const updateFeeds = async () => {
   if (watchedState.urls.length === 0) {
     setTimeout(updateFeeds, 5000)
     return
   }
 
-  const promises = watchedState.urls.map((url) =>
-    axios.get(PROXY + encodeURIComponent(url), { timeout: TIMEOUT })
-      .then((response) => parseRss(response.data.contents))
-      .then(({ posts }) => {
-        const existingLinks = new Set(watchedState.posts.map(p => p.link))
-        const newPosts = posts
-          .filter(post => !existingLinks.has(post.link))
-          .map(post => ({
-            ...post,
-            id: crypto.randomUUID(),
-            feedId: watchedState.feeds.find(f => f.url === url).id
-          }))
+  const updatePromises = watchedState.urls.map(async (url) => {
+    try {
+      const response = await axios.get(PROXY + encodeURIComponent(url), { timeout: TIMEOUT })
+      const { posts: freshPosts } = parseRss(response.data.contents)
 
-        if (newPosts.length > 0) {
-          watchedState.posts = [...newPosts, ...watchedState.posts]
-        }
-      })
-      .catch((err) => {
-        console.warn('Auto-update failed for:', url, err.message)
-      })
-  )
+      const existingLinks = new Set(watchedState.posts.map(p => p.link))
+      const newPosts = freshPosts
+        .filter(post => !existingLinks.has(post.link))
+        .map(post => ({
+          ...post,
+          id: crypto.randomUUID(),
+          feedId: watchedState.feeds.find(f => f.url === url).id
+        }))
 
-  Promise.allSettled(promises).finally(() => {
-    setTimeout(updateFeeds, 5000) // ← следующий запуск через 5 сек
+      if (newPosts.length > 0) {
+        watchedState.posts = [...newPosts, ...watchedState.posts]
+      }
+    } catch (err) {
+      console.warn('Auto-update failed:', url, err.message)
+    }
   })
+
+  await Promise.allSettled(updatePromises)
+  setTimeout(updateFeeds, 5000)
 }
 
-// Запускаем сразу после загрузки страницы
 updateFeeds()
 
 const modal = document.getElementById('modal')

@@ -1,4 +1,4 @@
-// src/i18n.js — РАБОТАЕТ У ВСЕХ СТУДЕНТОВ HEXLET
+// src/i18n.js
 import i18next from 'i18next'
 
 i18next.init({
@@ -23,4 +23,4 @@ i18next.init({
   }
 })
 
-export default i18next
+export { i18next as default }

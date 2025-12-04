@@ -106,15 +106,21 @@ const renderPosts = (elements, posts, { viewedPostIds }) => {
   elements.postsContainer.append(card)
 }
 
-export default (state, elements, i18n) => {
+const createWatchedState = (state, elements, i18n) => {
   const render = () => {
     const { form, feeds, posts } = state
     renderForm(elements, i18n, form.state, form.error)
-    renderFeeds(elements, feeds)      // ← без i18n
+    renderFeeds(elements, feeds)
     renderPosts(elements, posts, state.ui)
   }
 
-  const watched = onChange(state, () => render())
+  const handleStateChange = () => {
+    render()
+  }
+
+  const watched = onChange(state, handleStateChange)
   render()
   return watched
 }
+
+export default createWatchedState
