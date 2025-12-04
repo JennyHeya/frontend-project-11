@@ -23,4 +23,4 @@ i18next.init({
   }
 })
 
-export { i18next as default }
+export default i18next
