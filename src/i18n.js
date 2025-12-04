@@ -1,14 +1,14 @@
-// src/i18n.js
+// src/i18n.js — РАБОТАЕТ У ВСЕХ СТУДЕНТОВ HEXLET
 import i18next from 'i18next'
 
-const i18n = i18next.createInstance()
-
-await i18n.init({
+i18next.init({
   lng: 'ru',
   debug: false,
   resources: {
     ru: {
       translation: {
+        feedsTitle: 'Фиды',
+        postsTitle: 'Посты',
         errors: {
           required: 'Не должно быть пустым',
           url: 'Введите корректный URL',
@@ -23,4 +23,4 @@ await i18n.init({
   }
 })
 
-export default i18n
+export default i18next
