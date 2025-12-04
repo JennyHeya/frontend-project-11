@@ -60,27 +60,49 @@ const renderFeeds = (elements, feeds) => {
   elements.feedsContainer.append(card)
 }
 
-const renderPosts = (elements, posts) => {
+const renderPosts = (elements, posts, { viewedPostIds }) => {
   elements.postsContainer.innerHTML = ''
 
   if (posts.length === 0) return
 
   const card = document.createElement('div')
   card.className = 'card border-0'
+
   card.innerHTML = `
     <div class="card-body">
       <h2 class="card-title h4">Посты</h2>
     </div>
     <ul class="list-group border-0 rounded-0">
-      ${posts.map(post => `
-        <li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
-          <a href="${post.link}" class="fw-bold" target="_blank" rel="noopener noreferrer">
-            ${post.title}
-          </a>
-        </li>
-      `).join('')}
+      ${posts.map((post) => {
+        const isViewed = viewedPostIds.has(post.id)
+        const linkWeight = isViewed ? 'fw-normal link-secondary' : 'fw-bold'
+        
+        return `
+          <li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
+            <a 
+              href="${post.link}" 
+              class="${linkWeight}" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              data-post-id="${post.id}"
+            >
+              ${post.title}
+            </a>
+            <button 
+              type="button" 
+              class="btn btn-outline-primary btn-sm" 
+              data-id="${post.id}" 
+              data-bs-toggle="modal" 
+              data-bs-target="#modal"
+            >
+              Просмотр
+            </button>
+          </li>
+        `
+      }).join('')}
     </ul>
   `
+
   elements.postsContainer.append(card)
 }
 
@@ -89,7 +111,7 @@ export default (state, elements, i18n) => {
     const { form, feeds, posts } = state
     renderForm(elements, i18n, form.state, form.error)
     renderFeeds(elements, feeds)      // ← без i18n
-    renderPosts(elements, posts)     // ← без i18n
+    renderPosts(elements, posts, state.ui)
   }
 
   const watched = onChange(state, () => render())

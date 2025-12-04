@@ -60,7 +60,6 @@ const addFeed = (url) => {
       const newPosts = posts.map(post => ({ ...post, feedId }))
       watchedState.posts = [...newPosts, ...watchedState.posts]
 
-      // urls тоже через присваивание
       watchedState.urls = [...watchedState.urls, url]
 
       watchedState.form.state = 'success'
@@ -118,7 +117,6 @@ const updateFeeds = () => {
       })
       .catch((err) => {
         console.warn('Auto-update failed for:', url, err.message)
-        // Просто молчим
       })
   )
 
@@ -129,3 +127,27 @@ const updateFeeds = () => {
 
 // Запускаем сразу после загрузки страницы
 updateFeeds()
+
+const modal = document.getElementById('modal')
+const modalTitle = document.getElementById('modalTitle')
+const modalDescription = document.getElementById('modalDescription')
+const modalLink = document.getElementById('modalLink')
+
+// Обработка клика по кнопке "Просмотр"
+elements.postsContainer.addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON') return
+
+  const button = e.target
+  const postId = button.dataset.id
+  const post = watchedState.posts.find(p => p.id === postId)
+
+  if (post) {
+    // Помечаем как прочитанный
+    watchedState.ui.viewedPostIds.add(postId)
+
+    modalTitle.textContent = post.title
+    modalDescription.textContent = post.description || 'Нет описания'
+    modalLink.href = post.link
+
+  }
+})

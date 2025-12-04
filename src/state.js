@@ -6,5 +6,11 @@ export default {
   },
   urls: [],
   feeds: [],
-  posts: []
+  posts: [],
+  ui: {
+    viewedPostIds: new Set()  // id прочитанных постов
+  },
+  modal: {
+    postId: null  // id поста
+  }
 }
