@@ -91,7 +91,7 @@ elements.form.addEventListener('submit', (e) => {
     })
 })
 
-// === АВТООБНОВЛЕНИЕ — БЕЗ ГЛУБОКОЙ ВЛОЖЕННОСТИ (Sonar будет доволен) ===
+// === АВТООБНОВЛЕНИЕ 
 const updateFeeds = async () => {
   if (watchedState.urls.length === 0) {
     setTimeout(updateFeeds, 5000)
