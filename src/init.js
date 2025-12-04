@@ -92,23 +92,40 @@ elements.form.addEventListener('submit', (e) => {
     })
 })
 
-// Автообновление
-setInterval(() => {
-  if (watchedState.urls.length === 0) return
+// Автообновление//
+const updateFeeds = () => {
+  if (watchedState.urls.length === 0) {
+    setTimeout(updateFeeds, 5000)
+    return
+  }
 
-  watchedState.urls.forEach((url) => {
+  const promises = watchedState.urls.map((url) =>
     axios.get(PROXY + encodeURIComponent(url), { timeout: TIMEOUT })
       .then((response) => parseRss(response.data.contents))
       .then(({ posts }) => {
         const existingLinks = new Set(watchedState.posts.map(p => p.link))
         const newPosts = posts
-          .filter(p => !existingLinks.has(p.link))
-          .map(p => ({ ...p, id: crypto.randomUUID(), feedId: watchedState.feeds.find(f => f.url === url).id }))
+          .filter(post => !existingLinks.has(post.link))
+          .map(post => ({
+            ...post,
+            id: crypto.randomUUID(),
+            feedId: watchedState.feeds.find(f => f.url === url).id
+          }))
 
         if (newPosts.length > 0) {
           watchedState.posts = [...newPosts, ...watchedState.posts]
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.warn('Auto-update failed for:', url, err.message)
+        // Просто молчим
+      })
+  )
+
+  Promise.allSettled(promises).finally(() => {
+    setTimeout(updateFeeds, 5000) // ← следующий запуск через 5 сек
   })
-}, 5000)
+}
+
+// Запускаем сразу после загрузки страницы
+updateFeeds()
