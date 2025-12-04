@@ -9,4 +9,3 @@
 
 SonarCloud
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=JennyHeya_frontend-project-11&metric=alert_status)](https://sonarcloud.io/dashboard?id=JennyHeya_frontend-project-11)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=JennyHeya_frontend-project-11&metric=coverage)](https://sonarcloud.io/dashboard?id=JennyHeya_frontend-project-11)
