@@ -6,8 +6,15 @@ export const getSchema = (existingUrls) =>
     url: yup
       .string()
       .required('required')
-      .trim()
-      .url('url')
+      .test('is-url', 'url', (value) => {
+        if (!value) return false;
+        try {
+          new URL(value);
+          return true;
+        } catch {
+          return false;
+        }
+      })
       .notOneOf(existingUrls, 'duplicate')
   })
   

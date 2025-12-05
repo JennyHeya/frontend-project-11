@@ -1,7 +1,7 @@
 // src/view.js
 import onChange from 'on-change'
 
-const renderForm = (elements, i18n, formState, error = null) => {
+export const renderForm = (elements, i18n, formState, error = null) => {
   elements.input.classList.remove('is-invalid')
   elements.feedback.classList.remove('text-danger', 'text-success')
   elements.feedback.textContent = ''

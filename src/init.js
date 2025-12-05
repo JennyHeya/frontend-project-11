@@ -69,7 +69,7 @@ const addFeed = (url) => {
 elements.form.addEventListener('submit', (e) => {
   e.preventDefault()
 
-  const url = elements.input.value
+  const url = elements.input.value.trim()
 
   watchedState.form.state = 'processing'
   watchedState.form.error = null
@@ -77,23 +77,23 @@ elements.form.addEventListener('submit', (e) => {
   const schema = getSchema(watchedState.urls)
 
   schema
-.validate({ url }, { abortEarly: false })
-  .then(() => addFeed(url))
-.catch((err) => {
-  let errorKey = 'network'
+    .validate({ url }, { abortEarly: false })
+    .then(() => addFeed(url))
+    .catch((err) => {
+      let errorKey = 'network'
 
-  if (err.name === 'ValidationError' && err.inner?.length > 0) {
-    const firstError = err.inner[0]
-    if (firstError.type === 'required') errorKey = 'required'
-    else if (firstError.type === 'url') errorKey = 'url'
-    else if (firstError.type === 'notOneOf') errorKey = 'duplicate'
-  } else if (err.message === 'invalidRss') {
-    errorKey = 'invalidRss'
-  }
+      if (err.name === 'ValidationError' && err.inner?.length > 0) {
+        const firstError = err.inner[0]
+        if (firstError.type === 'required') errorKey = 'required'
+        else if (firstError.type === 'is-url') errorKey = 'url'
+        else if (firstError.type === 'notOneOf') errorKey = 'duplicate'
+      } else if (err.message === 'invalidRss') {
+        errorKey = 'invalidRss'
+      }
 
-  watchedState.form.error = errorKey
-  watchedState.form.state = 'error'
-})
+      watchedState.form.error = errorKey
+      watchedState.form.state = 'error'
+    })
 })
 
 // === АВТООБНОВЛЕНИЕ 
@@ -120,8 +120,8 @@ const updateFeeds = async () => {
       if (newPosts.length > 0) {
         watchedState.posts = [...newPosts, ...watchedState.posts]
       }
-    } catch (err) {
-      console.warn('Auto-update failed:', url, err.message)
+    } catch {
+      // Игнорируем ошибки при обновлении
     }
   })
 
@@ -131,7 +131,6 @@ const updateFeeds = async () => {
 
 updateFeeds()
 
-const modal = document.getElementById('modal')
 const modalTitle = document.getElementById('modalTitle')
 const modalDescription = document.getElementById('modalDescription')
 const modalLink = document.getElementById('modalLink')
