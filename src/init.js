@@ -69,7 +69,7 @@ const addFeed = (url) => {
 elements.form.addEventListener('submit', (e) => {
   e.preventDefault()
 
-  const url = elements.input.value.trim()
+  const url = elements.input.value
 
   watchedState.form.state = 'processing'
   watchedState.form.error = null
@@ -79,21 +79,21 @@ elements.form.addEventListener('submit', (e) => {
   schema
 .validate({ url }, { abortEarly: false })
   .then(() => addFeed(url))
-  .catch((err) => {
-    let errorKey = 'network'
+.catch((err) => {
+  let errorKey = 'network'
 
-    if (err.name === 'ValidationError' && err.inner?.length > 0) {
-      const type = err.inner[0].type
-      if (type === 'required') errorKey = 'required'
-      else if (type === 'url') errorKey = 'url'
-      else if (type === 'notOneOf') errorKey = 'duplicate'
-    } else if (err.message === 'invalidRss') {
-      errorKey = 'invalidRss'
-    }
+  if (err.name === 'ValidationError' && err.inner?.length > 0) {
+    const firstError = err.inner[0]
+    if (firstError.type === 'required') errorKey = 'required'
+    else if (firstError.type === 'url') errorKey = 'url'
+    else if (firstError.type === 'notOneOf') errorKey = 'duplicate'
+  } else if (err.message === 'invalidRss') {
+    errorKey = 'invalidRss'
+  }
 
-    watchedState.form.error = errorKey
-    watchedState.form.state = 'error'
-  })
+  watchedState.form.error = errorKey
+  watchedState.form.state = 'error'
+})
 })
 
 // === АВТООБНОВЛЕНИЕ 
