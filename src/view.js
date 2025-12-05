@@ -24,8 +24,9 @@ const renderForm = (elements, i18n, formState, error = null) => {
 
     case 'error':
       elements.input.classList.add('is-invalid')
+      elements.feedback.classList.remove('text-success')
       elements.feedback.classList.add('text-danger')
-elements.feedback.innerHTML = `<div class="text-danger">${i18n.t(`errors.${error}`)}</div>`
+      elements.feedback.innerHTML = i18n.t(`errors.${error}`)
       elements.input.removeAttribute('readonly')
       elements.submitButton.disabled = false
       break
