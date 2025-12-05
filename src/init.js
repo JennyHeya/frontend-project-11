@@ -77,18 +77,23 @@ elements.form.addEventListener('submit', (e) => {
   const schema = getSchema(watchedState.urls)
 
   schema
-    .validate({ url }, { abortEarly: false })
-    .then(() => addFeed(url))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        watchedState.form.error = err.errors[0]
-      } else if (err.message === 'invalidRss') {
-        watchedState.form.error = 'invalidRss'
-      } else {
-        watchedState.form.error = 'network'
-      }
-      watchedState.form.state = 'error'
-    })
+.validate({ url }, { abortEarly: false })
+  .then(() => addFeed(url))
+  .catch((err) => {
+    let errorKey = 'network'
+
+    if (err.name === 'ValidationError' && err.inner?.length > 0) {
+      const type = err.inner[0].type
+      if (type === 'required') errorKey = 'required'
+      else if (type === 'url') errorKey = 'url'
+      else if (type === 'notOneOf') errorKey = 'duplicate'
+    } else if (err.message === 'invalidRss') {
+      errorKey = 'invalidRss'
+    }
+
+    watchedState.form.error = errorKey
+    watchedState.form.state = 'error'
+  })
 })
 
 // === АВТООБНОВЛЕНИЕ 

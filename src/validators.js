@@ -5,9 +5,10 @@ export const getSchema = (existingUrls) =>
   yup.object({
     url: yup
       .string()
+      .required('required')    // ← ПЕРЕД TRIM!
       .trim()
-      .required('required')
       .url('url')
       .notOneOf(existingUrls, 'duplicate')
   })
+  
   
