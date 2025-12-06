@@ -85,7 +85,7 @@ elements.form.addEventListener('submit', (e) => {
         if (firstError.type === 'required') errorKey = 'required'
         else if (firstError.type === 'is-url') errorKey = 'url'
         else if (firstError.type === 'notOneOf') errorKey = 'duplicate'
-      } 
+      }
       else if (err.message === 'invalidRss') {
         errorKey = 'invalidRss'
       }
@@ -118,7 +118,7 @@ const updateFeeds = async () => {
       if (newPosts.length > 0) {
         watchedState.posts = [...newPosts, ...watchedState.posts]
       }
-    } 
+    }
     catch {
       // пропускаем
     }
