@@ -19,7 +19,7 @@ const elements = {
 
 const watchedState = view(state, elements, i18n)
 
-const parseRss = (content) => {
+const parseRss = content => {
   const parser = new DOMParser()
   const doc = parser.parseFromString(content, 'application/xml')
 
@@ -41,11 +41,11 @@ const parseRss = (content) => {
   return { title, description, posts }
 }
 
-const addFeed = (url) => {
+const addFeed = url => {
   const proxyUrl = PROXY + encodeURIComponent(url)
 
   return axios.get(proxyUrl, { timeout: TIMEOUT })
-    .then((response) => {
+    .then(response => {
       const content = response.data.contents
       if (!content) throw new Error('network')
       return parseRss(content)
@@ -64,7 +64,7 @@ const addFeed = (url) => {
     })
 }
 
-elements.form.addEventListener('submit', (e) => {
+elements.form.addEventListener('submit', e => {
   e.preventDefault()
 
   const url = elements.input.value.trim()
@@ -77,7 +77,7 @@ elements.form.addEventListener('submit', (e) => {
   schema
     .validate({ url }, { abortEarly: false })
     .then(() => addFeed(url))
-    .catch((err) => {
+    .catch(err => {
       let errorKey = 'network'
 
       if (err.name === 'ValidationError' && err.inner?.length > 0) {
@@ -85,8 +85,7 @@ elements.form.addEventListener('submit', (e) => {
         if (firstError.type === 'required') errorKey = 'required'
         else if (firstError.type === 'is-url') errorKey = 'url'
         else if (firstError.type === 'notOneOf') errorKey = 'duplicate'
-      } 
-      else if (err.message === 'invalidRss') {
+      } else if (err.message === 'invalidRss') {
         errorKey = 'invalidRss'
       }
 
@@ -101,7 +100,7 @@ const updateFeeds = async () => {
     return
   }
 
-  const updatePromises = watchedState.urls.map(async (url) => {
+  const updatePromises = watchedState.urls.map(async url => {
     try {
       const response = await axios.get(PROXY + encodeURIComponent(url), { timeout: TIMEOUT })
       const { posts: freshPosts } = parseRss(response.data.contents)
@@ -118,8 +117,8 @@ const updateFeeds = async () => {
       if (newPosts.length > 0) {
         watchedState.posts = [...newPosts, ...watchedState.posts]
       }
-    } 
-    catch {
+    } catch {
+      // пропускаем
     }
   })
 
@@ -133,7 +132,7 @@ const modalTitle = document.getElementById('modalTitle')
 const modalDescription = document.getElementById('modalDescription')
 const modalLink = document.getElementById('modalLink')
 
-elements.postsContainer.addEventListener('click', (e) => {
+elements.postsContainer.addEventListener('click', e => {
   if (e.target.tagName !== 'BUTTON') return
 
   const button = e.target
