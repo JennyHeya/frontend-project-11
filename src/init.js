@@ -19,7 +19,7 @@ const elements = {
 
 const watchedState = view(state, elements, i18n)
 
-const parseRss = content => {
+const parseRss = (content) => {
   const parser = new DOMParser()
   const doc = parser.parseFromString(content, 'application/xml')
 
@@ -31,7 +31,7 @@ const parseRss = content => {
   const description = doc.querySelector('channel > description')?.textContent ?? ''
 
   const items = doc.querySelectorAll('item')
-  const posts = Array.from(items).map(item => ({
+  const posts = Array.from(items).map((item) => ({
     id: crypto.randomUUID(),
     title: item.querySelector('title')?.textContent ?? 'Без названия',
     link: item.querySelector('link')?.textContent ?? '#',
@@ -41,11 +41,11 @@ const parseRss = content => {
   return { title, description, posts }
 }
 
-const addFeed = url => {
+const addFeed = (url) => {
   const proxyUrl = PROXY + encodeURIComponent(url)
 
   return axios.get(proxyUrl, { timeout: TIMEOUT })
-    .then(response => {
+    .then((response) => {
       const content = response.data.contents
       if (!content) throw new Error('network')
       return parseRss(content)
@@ -55,7 +55,7 @@ const addFeed = url => {
 
       watchedState.feeds = [{ id: feedId, title, description, url }, ...watchedState.feeds]
 
-      const newPosts = posts.map(post => ({ ...post, feedId }))
+      const newPosts = posts.map((post) => ({ ...post, feedId }))
       watchedState.posts = [...newPosts, ...watchedState.posts]
 
       watchedState.urls = [...watchedState.urls, url]
@@ -64,7 +64,7 @@ const addFeed = url => {
     })
 }
 
-elements.form.addEventListener('submit', e => {
+elements.form.addEventListener('submit', (e) => {
   e.preventDefault()
 
   const url = elements.input.value.trim()
@@ -77,7 +77,7 @@ elements.form.addEventListener('submit', e => {
   schema
     .validate({ url }, { abortEarly: false })
     .then(() => addFeed(url))
-    .catch(err => {
+    .catch((err) => {
       let errorKey = 'network'
 
       if (err.name === 'ValidationError' && err.inner?.length > 0) {
@@ -100,18 +100,18 @@ const updateFeeds = async () => {
     return
   }
 
-  const updatePromises = watchedState.urls.map(async url => {
+  const updatePromises = watchedState.urls.map(async (url) => {
     try {
       const response = await axios.get(PROXY + encodeURIComponent(url), { timeout: TIMEOUT })
       const { posts: freshPosts } = parseRss(response.data.contents)
 
-      const existingLinks = new Set(watchedState.posts.map(p => p.link))
+      const existingLinks = new Set(watchedState.posts.map((p) => p.link))
       const newPosts = freshPosts
-        .filter(post => !existingLinks.has(post.link))
-        .map(post => ({
+        .filter((post) => !existingLinks.has(post.link))
+        .map((post) => ({
           ...post,
           id: crypto.randomUUID(),
-          feedId: watchedState.feeds.find(f => f.url === url).id,
+          feedId: watchedState.feeds.find((f) => f.url === url).id,
         }))
 
       if (newPosts.length > 0) {
@@ -132,12 +132,12 @@ const modalTitle = document.getElementById('modalTitle')
 const modalDescription = document.getElementById('modalDescription')
 const modalLink = document.getElementById('modalLink')
 
-elements.postsContainer.addEventListener('click', e => {
+elements.postsContainer.addEventListener('click', (e) => {
   if (e.target.tagName !== 'BUTTON') return
 
   const button = e.target
   const postId = button.dataset.id
-  const post = watchedState.posts.find(p => p.id === postId)
+  const post = watchedState.posts.find((p) => p.id === postId)
 
   if (post) {
     watchedState.ui.viewedPostIds.add(postId)
