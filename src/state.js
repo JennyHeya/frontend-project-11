@@ -1,16 +1,15 @@
-// src/state.js
 export default {
   form: {
     state: 'initial',
-    error: null
+    error: null,
   },
   urls: [],
   feeds: [],
   posts: [],
   ui: {
-    viewedPostIds: new Set()  // id прочитанных постов
+    viewedPostIds: new Set(),
   },
   modal: {
-    postId: null  // id поста
-  }
+    postId: null,
+  },
 }

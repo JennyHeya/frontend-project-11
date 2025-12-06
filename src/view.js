@@ -1,4 +1,3 @@
-// src/view.js
 import onChange from 'on-change'
 
 export const renderForm = (elements, i18n, formState, error = null) => {
@@ -74,10 +73,10 @@ const renderPosts = (elements, posts, { viewedPostIds }) => {
       <h2 class="card-title h4">Посты</h2>
     </div>
     <ul class="list-group border-0 rounded-0">
-      ${posts.map((post) => {
+      ${posts.map(post => {
         const isViewed = viewedPostIds.has(post.id)
         const linkWeight = isViewed ? 'fw-normal link-secondary' : 'fw-bold'
-        
+
         return `
           <li class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
             <a 

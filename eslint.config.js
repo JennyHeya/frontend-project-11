@@ -1,6 +1,7 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import pluginImport from "eslint-plugin-import";
+import globals from 'globals'
+import pluginJs from '@eslint/js'
+import pluginImport from 'eslint-plugin-import'
+import stylistic from '@stylistic/eslint-plugin'
 
 export default [
   {
@@ -10,26 +11,38 @@ export default [
         ...globals.node,
       },
       ecmaVersion: 2025,
-      sourceType: "module",
+      sourceType: 'module',
     },
   },
   pluginJs.configs.recommended,
   {
     plugins: {
       import: pluginImport,
+      '@stylistic': stylistic,
     },
     rules: {
-      "import/extensions": "off",
-      "import/no-unresolved": "off",
-      "no-console": "warn",
-      "no-unused-vars": "warn",
+      'import/extensions': 'off',
+      'import/no-unresolved': 'off',
+      'no-console': 'warn',
+      'no-unused-vars': 'warn',
+      '@stylistic/quotes': ['error', 'single'],
+      '@stylistic/semi': ['error', 'never'],
+      '@stylistic/comma-dangle': ['error', 'always-multiline'],
+      '@stylistic/indent': ['error', 2],
+      '@stylistic/no-trailing-spaces': 'error',
+      '@stylistic/eol-last': ['error', 'always'],
+      '@stylistic/brace-style': ['error', '1tbs'],
+      '@stylistic/arrow-parens': ['error', 'as-needed'],
+      '@stylistic/padded-blocks': ['error', 'never'],
+      '@stylistic/no-multi-spaces': 'error',
+      '@stylistic/no-multiple-empty-lines': ['error', { max: 1 }],
     },
     settings: {
-      "import/resolver": {
+      'import/resolver': {
         node: {
-          extensions: [".js", ".jsx"],
+          extensions: ['.js', '.jsx'],
         },
       },
     },
   },
-];
+]
