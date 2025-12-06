@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 
-export const getSchema = (existingUrls) =>
+export const getSchema = existingUrls =>
   yup.object().shape({
     url: yup
       .string()
@@ -10,7 +10,8 @@ export const getSchema = (existingUrls) =>
         try {
           new URL(value)
           return true
-        } catch {
+        } 
+        catch {
           return false
         }
       })

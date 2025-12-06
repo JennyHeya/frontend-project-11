@@ -31,7 +31,7 @@ const parseRss = (content) => {
   const description = doc.querySelector('channel > description')?.textContent ?? ''
 
   const items = doc.querySelectorAll('item')
-  const posts = Array.from(items).map((item) => ({
+  const posts = Array.from(items).map(item => ({
     id: crypto.randomUUID(),
     title: item.querySelector('title')?.textContent ?? 'Без названия',
     link: item.querySelector('link')?.textContent ?? '#',
@@ -55,7 +55,7 @@ const addFeed = (url) => {
 
       watchedState.feeds = [{ id: feedId, title, description, url }, ...watchedState.feeds]
 
-      const newPosts = posts.map((post) => ({ ...post, feedId }))
+      const newPosts = posts.map(post => ({ ...post, feedId }))
       watchedState.posts = [...newPosts, ...watchedState.posts]
 
       watchedState.urls = [...watchedState.urls, url]
@@ -85,7 +85,8 @@ elements.form.addEventListener('submit', (e) => {
         if (firstError.type === 'required') errorKey = 'required'
         else if (firstError.type === 'is-url') errorKey = 'url'
         else if (firstError.type === 'notOneOf') errorKey = 'duplicate'
-      } else if (err.message === 'invalidRss') {
+      } 
+      else if (err.message === 'invalidRss') {
         errorKey = 'invalidRss'
       }
 
@@ -105,19 +106,20 @@ const updateFeeds = async () => {
       const response = await axios.get(PROXY + encodeURIComponent(url), { timeout: TIMEOUT })
       const { posts: freshPosts } = parseRss(response.data.contents)
 
-      const existingLinks = new Set(watchedState.posts.map((p) => p.link))
+      const existingLinks = new Set(watchedState.posts.map(p => p.link))
       const newPosts = freshPosts
-        .filter((post) => !existingLinks.has(post.link))
-        .map((post) => ({
+        .filter(post => !existingLinks.has(post.link))
+        .map(post => ({
           ...post,
           id: crypto.randomUUID(),
-          feedId: watchedState.feeds.find((f) => f.url === url).id,
+          feedId: watchedState.feeds.find(f => f.url === url).id,
         }))
 
       if (newPosts.length > 0) {
         watchedState.posts = [...newPosts, ...watchedState.posts]
       }
-    } catch {
+    } 
+    catch {
       // пропускаем
     }
   })
@@ -137,7 +139,7 @@ elements.postsContainer.addEventListener('click', (e) => {
 
   const button = e.target
   const postId = button.dataset.id
-  const post = watchedState.posts.find((p) => p.id === postId)
+  const post = watchedState.posts.find(p => p.id === postId)
 
   if (post) {
     watchedState.ui.viewedPostIds.add(postId)
