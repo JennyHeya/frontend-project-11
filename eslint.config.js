@@ -17,7 +17,7 @@ export default [
   pluginJs.configs.recommended,
   {
     plugins: {
-      import: pluginImport,
+      'import': pluginImport,
       '@stylistic': stylistic,
     },
     rules: {

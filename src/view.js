@@ -73,7 +73,7 @@ const renderPosts = (elements, posts, { viewedPostIds }) => {
       <h2 class="card-title h4">Посты</h2>
     </div>
     <ul class="list-group border-0 rounded-0">
-      ${posts.map(post => {
+      ${posts.map((post) => {
         const isViewed = viewedPostIds.has(post.id)
         const linkWeight = isViewed ? 'fw-normal link-secondary' : 'fw-bold'
 
